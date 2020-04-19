@@ -1,2 +1,2 @@
 # interpreterjs
-I think im creating an interpreter
+I think im coding an interpreter
