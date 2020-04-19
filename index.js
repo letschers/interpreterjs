@@ -3,6 +3,7 @@ const token = (type, value) => ({
   value: value,
 });
 
+const compare = (expectedType, type) => expectedType == type;
 
 const tokenizer = (str) => {
   tokens = [];
@@ -24,27 +25,37 @@ const interprete = (tokens) => {
   let acc = "";
 
   while (pointer < tokens.length) {
-
     if (tokens[pointer]["type"] != "operator" && pointer != tokens.length - 1) {
       acc += tokens[pointer]["value"];
     } else {
-
       if (acc == "") {
-        expression.push(parseInt(tokens[pointer]["value"]));
+        expression.push(token("integer", parseInt(tokens[pointer]["value"])));
         break;
       }
 
       acc = parseInt(acc);
-      expression.push(acc);
-      expression.push(tokens[pointer]["value"]);
+      expression.push(token("integer", acc));
+      expression.push(token("operator", tokens[pointer]["value"]));
       acc = "";
     }
     pointer++;
   }
 
-  return eval(expression.join(''));
+  pointer = 1;
+  let result = expression[0]["value"];
 
+  while (pointer < expression.length) {
+    if (expression[pointer]["type"] == "operator") {
+      if (compare(expression[pointer]["value"], "+")) {
+        result += expression[pointer + 1]["value"];
+      } else {
+        result -= expression[pointer + 1]["value"];
+      }
+    }
+    pointer++;
+  }
   
+  return result;
 };
 
-console.log(interprete(tokenizer("3 + 5 * 5")));
+console.log(interprete(tokenizer("50 - 25 + 5")));
